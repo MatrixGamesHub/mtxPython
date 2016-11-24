@@ -1,0 +1,44 @@
+/* override table width restrictions */
+.wy-table-responsive table td, .wy-table-responsive table th {
+    white-space: normal;
+}
+
+.wy-table-responsive {
+    margin-bottom: 24px;
+    max-width: 100%;
+    overflow: visible;
+}
+
+.rst-content code.xref, a .rst-content code {
+    font-weight: normal;
+    color: #2980B9;
+}
+
+.rst-content dl dt code.xref {
+    font-weight: bold;
+}
+
+.rst-content dl dt {
+    width: 100%;
+}
+
+code, .rst-content tt, .rst-content code {
+    font-size: 100%;
+    border: none;
+    background: none;
+    white-space: normal;
+    padding: 0;
+    font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+}
+
+.rst-content a:visited {
+    color:#2980B9;
+}
+
+.target:target + .method dt, dt:target, div:target h1 {
+    background-color: #ffa !important;
+}
+
+.field {
+    line-height: 16px;
+}
