@@ -41,7 +41,7 @@ setup(
     #   1.2.0.b1    # Beta Release
     #   1.2.0.rc1   # Release Candidate
     #   1.2.0       # Final Release
-    version='0.1.0.dev1',
+    version='0.1.0.dev3',
 
     description='A framework to create matrix games',
     long_description=long_description,
@@ -94,7 +94,7 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     package_dir={'': 'src'},
-    packages=["mtx", "mtxNet"],
+    packages=find_packages('src'),
 
     zip_safe=False,
 
