@@ -21,33 +21,33 @@ class GameInterface():
     @classmethod
     def GetName(cls):
         """
-        Returns a unique name for the game. The default name is the name of the class.
+        Returns the unique name of the game. The default name is the name of the class.
         The method must only be overwritten if the name to be used differs from the class name.
 
         Returns:
-            :obj:`str`: The unique name of this game.
+            :obj:`str`: The unique name of the game.
         """
         return cls.__name__
 
     @staticmethod
     def GetDescription():
         """
-        Returns a description of this game. This is shown in a game console during the game
+        Returns the description of the game. This is shown in the game console during the game
         selection. By default, an empty string is returned.
 
         Returns:
-            :obj:`str`: The description of this game.
+            :obj:`str`: The description of the game.
         """
         return ""
 
     @classmethod
     def GetAuthor(cls):
         """
-        Returns the author of the game. This is shown in a game console during the game selection.
-        By default, an empty string is returned.
+        Returns the author of the game. This is shown in the game console during the game
+        selection. By default, an empty string is returned.
 
         Returns:
-            :obj:`str`: The author of this game.
+            :obj:`str`: The author of the game.
         """
         return ""
 
@@ -64,8 +64,8 @@ class GameInterface():
 
     def OnInit(self, settings):
         """
-        This method is called when the game is :class:`loaded<mtx.GameConsole.LoadGame>` in a game
-        console. Variables can be initialized and settings can be set.
+        This method is called when the game is :class:`loaded<mtx.GameConsole.LoadGame>` in the
+        game console. Variables can be initialized and settings can be set.
 
         Parameters:
             settings (:class:`mtx.Settings`): The settings object for this game in which all game
