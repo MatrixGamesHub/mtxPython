@@ -15,6 +15,6 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .mtxNetRenderer import MtxNetRenderer
-from .mtxNetControllerServer import MtxNetControllerServer
-from .mtxControllerService.ttypes import GameInfo, GameError
+from .RendererClient import RendererClient
+from .ControllerServer import ControllerServer
+from .ControllerHandler import ControllerHandler

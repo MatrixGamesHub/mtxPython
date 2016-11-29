@@ -1,8 +1,8 @@
 
-/* Interface definition for the MtxControllerService service */
+/* Interface definition for the ControllerService service */
 
-namespace csharp MtxControllerService
-namespace py MtxControllerService
+namespace csharp ControllerService
+namespace py ControllerService
 
 
 enum Direction {
@@ -25,7 +25,7 @@ exception GameError {
 }
 
 
-service MtxControllerService {
+service ControllerService {
     void Ping(),
     i16 ConnectRenderer(1: string host, 2: i32 port),
     void DisconnectRenderer(1: i16 rendererId),

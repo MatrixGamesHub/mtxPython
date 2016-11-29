@@ -16,8 +16,8 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from MtxControllerService import MtxControllerService
-from MtxControllerService.ttypes import *
+from ControllerService import ControllerService
+from ControllerService.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
@@ -109,7 +109,7 @@ else:
     else:
         transport = TTransport.TBufferedTransport(socket)
 protocol = TBinaryProtocol(transport)
-client = MtxControllerService.Client(protocol)
+client = ControllerService.Client(protocol)
 transport.open()
 
 if cmd == 'Ping':

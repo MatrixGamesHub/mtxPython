@@ -24,10 +24,10 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer, TNonblockingServer
 
-from .mtxControllerService import MtxControllerService
+from .controllerService import ControllerService
 
 
-class MtxNetControllerServer():
+class ControllerServer():
 
     def __init__(self, port, handler):
         self._port = port
@@ -51,7 +51,7 @@ class MtxNetControllerServer():
         self._active.clear()
 
     def _ServerThread(self):
-        processor = MtxControllerService.Processor(self._handler)
+        processor = ControllerService.Processor(self._handler)
         transport = TSocket.TServerSocket(port=self._port)
         tfactory = TTransport.TBufferedTransportFactory()
         pfactory = TBinaryProtocol.TBinaryProtocolFactory()

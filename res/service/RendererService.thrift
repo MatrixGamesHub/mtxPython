@@ -1,8 +1,8 @@
 
-/* Interface definition for the MtxRendererService service */
+/* Interface definition for the RendererService service */
 
-namespace csharp MtxRendererService
-namespace py MtxRendererService
+namespace csharp RendererService
+namespace py RendererService
 
 
 enum Direction {
@@ -44,7 +44,7 @@ struct LevelInfo {
 }
 
 
-service MtxRendererService {
+service RendererService {
     void Ping(),
     void Shutdown(),
     void Freeze(),

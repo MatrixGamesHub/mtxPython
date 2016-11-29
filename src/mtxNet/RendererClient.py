@@ -16,8 +16,8 @@
 """
 
 import mtx
-from .mtxRendererService import MtxRendererService
-from .mtxRendererService.ttypes import LevelInfo
+from .rendererService import RendererService
+from .rendererService.ttypes import LevelInfo
 
 from thrift import Thrift
 from thrift.transport import TSocket
@@ -25,12 +25,12 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
 
-class MtxNetRenderer(mtx.Renderer):
+class RendererClient(mtx.Renderer):
 
     def __init__(self, host, port):
         self._transport = TSocket.TSocket(host, port)
         protocol = TBinaryProtocol.TBinaryProtocol(self._transport)
-        self._client = MtxRendererService.Client(protocol)
+        self._client = RendererService.Client(protocol)
         self._connected = False
         self._host = host
         self._port = port
