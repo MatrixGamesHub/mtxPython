@@ -19,7 +19,7 @@ import mtx
 from .rendererService import RendererService
 from .rendererService.ttypes import LevelInfo
 
-from thrift import Thrift
+from thrift.Thrift import TException
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
@@ -63,9 +63,9 @@ class RendererClient(mtx.Renderer):
 
         try:
             cmd(*args, **kwargs)
-        except (ConnectionAbortedError, ConnectionResetError):
+        except TException:
             print("Connection to renderer client lost...")
-            self._connected = False
+            self.Disconnect()
 
     def ProcessActGroup(self, actGrp):
         self._CallClientCommand(self._client.Freeze)
