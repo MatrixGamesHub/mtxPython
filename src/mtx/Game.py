@@ -90,7 +90,7 @@ class GameInterface():
         Event method that is called periodically. The frequency of the calls depends on the
         implementation of the game console, but 20 milliseconds are recommended.
 
-        It can be used to perform time-based actions such as the movement of opponents.
+        It can be used to perform time-based actions such as the movement of the opponents.
 
         **It can not be guaranteed that the frequency of the calls will be met exactly.**
         To be independent of the frequency, the elapsed time since the last call is passed as a
@@ -182,7 +182,7 @@ class GameInterface():
             A :class:`mtx.Level` object to load as the next level.
 
         Raises:
-            NotImplementedError: If there is not implementation for this method.
+            NotImplementedError: If there is no implementation for this method.
 
         Examples:
             A level can be created by using a level definition, which is a dictionary that defines
@@ -190,7 +190,6 @@ class GameInterface():
             matrix where each ascii sign represents one or more game objects.
 
             .. code-block:: python
-                :linenos:
 
                 def GetNextLevel(self):
                     levelDef = {'name':  'Level 1',
@@ -200,12 +199,11 @@ class GameInterface():
 
                     return mtx.Level.CreateByDef(levelDef)
 
-            If you want to create a level based on an algorithm than you have to create a
-            :class:`mtx.Level` object and add the game objects with the :class:`Add<mtx.Level.Add>`
-            method.
+            If you want to create a level based on an algorithm, than you have to create a
+            :class:`mtx.Level` object. Use the:class:`Add<mtx.Level.Add>` method, to add game
+            objects to the level.
 
             .. code-block:: python
-                :linenos:
 
                 def GetNextLevel(self):
                     level = mtx.Level(5, 3, 'Level 1')
