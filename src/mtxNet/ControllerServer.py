@@ -22,7 +22,7 @@ from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
-from thrift.server import TServer, TNonblockingServer
+from thrift.server import TServer
 
 from .controllerService import ControllerService
 
@@ -52,9 +52,9 @@ class ControllerServer():
 
     def _ServerThread(self):
         processor = ControllerService.Processor(self._handler)
-        transport = TSocket.TServerSocket(port=self._port)
+        transport = TSocket.TServerSocket(host="0.0.0.0", port=self._port)
         tfactory = TTransport.TBufferedTransportFactory()
         pfactory = TBinaryProtocol.TBinaryProtocolFactory()
 
-        server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
+        server = TServer.TThreadedServer(processor, transport, tfactory, pfactory)
         server.serve()
