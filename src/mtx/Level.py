@@ -28,7 +28,7 @@ class Level():
     different :ref:`game objects<mtx.objects>` and gives access to specific objects.
     """
 
-    def __init__(self, width, height, name='',
+    def __init__(self, width, height, name=None,
                  groundTexture=Constants.TEXTURE.GROUND.NONE,
                  wallTexture=Constants.TEXTURE.WALL.WHITE_BRICKS):
         """
@@ -41,6 +41,7 @@ class Level():
             wallTecture (:class:`mtx.TEXTURE.GROUND<mtx.Constants.TEXTURE.GROUND>`): The texture
                 for a wall in the level.
         """
+        self._number = None
         self._field = Field(width, height)
         self._name = name
         self._groundTexture = groundTexture
@@ -51,7 +52,7 @@ class Level():
         self._newId = count()
 
     @staticmethod
-    def CreateByDef(defDict):
+    def Create(defDict):
         """
         This method creates a new level on the basis of a level definition in the form of a
         directory. It defines all the information for the level such as the name, the textures and
@@ -96,12 +97,26 @@ class Level():
 
         return level
 
+    def GetNumber(self):
+        """
+        Returns:
+            :obj:`int`: The number of the level.
+        """
+        return self._number
+
+    def SetNumber(self, number):
+        """
+        Parameters:
+            number (:obj:`int`): The number of the level.
+        """
+        self._number = number
+
     def GetName(self):
         """
         Returns:
             :obj:`str`: The name of the level.
         """
-        return self._name
+        return self._name if self._name is not None else 'Level %s' % self._number
 
     def GetGroundTexture(self):
         """

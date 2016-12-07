@@ -1,1 +1,0 @@
-C:\Python34\python.exe setup.py sdist --formats=gztar,zip bdist_wheel egg_info

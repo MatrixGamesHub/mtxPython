@@ -38,8 +38,10 @@ class BaseObject():
     def GetSymbol(self):
         return self._symbol
 
-    def Is(self, symbol):
-        return self._symbol == symbol
+    def __eq__(self, other):
+        if isinstance(other, BaseObject):
+            return self._symbol == other.GetSymbol()
+        return self._symbol == other
 
     def IsBelow(self, symbol):
         objBelow = self._cell.GetObjectBelow(self)

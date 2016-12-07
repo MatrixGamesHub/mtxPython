@@ -44,12 +44,12 @@ class GameInterface():
     def GetAuthor(cls):
         """
         Returns the author of the game. This is shown in the game console during the game
-        selection. By default, an empty string is returned.
+        selection. By default, 'Unknown' is returned.
 
         Returns:
             :obj:`str`: The author of the game.
         """
-        return ""
+        return "Unknown"
 
     @staticmethod
     def GetMaxPlayers():
@@ -156,7 +156,7 @@ class GameInterface():
         """
         return True
 
-    def OnLevelStart(self, level, isReset):
+    def OnLevelStart(self, level, reset):
         """
         Event method, which is called upon each start or reset of a level.
 
@@ -165,21 +165,25 @@ class GameInterface():
 
         Parameters:
             level (:class:`mtx.Level`): The level object to get access to the objects.
-            isReset (:obj:`bool`): True, if the start was caused by a reset, False otherwise.
+            reset (:obj:`bool`): True, if the start was caused by a reset, False otherwise.
         """
         pass
 
     def OnUndo(self):
         pass
 
-    def GetNextLevel(self):
+    def GetNextLevel(self, number):
         """
         This method is called from the game console to get the next level.
 
         **! You must override this method and have to return a level object.**
 
+        Parameters:
+            number (:obj:`int`): The number of the level to be loaded (starting at 1).
+
         Returns:
-            A :class:`mtx.Level` object to load as the next level.
+            A :class:`mtx.Level` object to load as the next level or None if there is no next
+            level.
 
         Raises:
             NotImplementedError: If there is no implementation for this method.
@@ -191,13 +195,13 @@ class GameInterface():
 
             .. code-block:: python
 
-                def GetNextLevel(self):
+                def GetNextLevel(self, number):
                     levelDef = {'name':  'Level 1',
                                 'plan': ['#####',
                                          '#1bt#',
                                          '#####']}
 
-                    return mtx.Level.CreateByDef(levelDef)
+                    return mtx.Level.Create(levelDef)
 
             If you want to create a level based on an algorithm, than you have to create a
             :class:`mtx.Level` object. Use the:class:`Add<mtx.Level.Add>` method, to add game
@@ -205,7 +209,7 @@ class GameInterface():
 
             .. code-block:: python
 
-                def GetNextLevel(self):
+                def GetNextLevel(self, number):
                     level = mtx.Level(5, 3, 'Level 1')
 
                     level.Add(0, 0, '#')
@@ -249,11 +253,15 @@ class Game(GameInterface):
         return self._settings
 
     def NextLevel(self):
-        self._level = self.GetNextLevel()
-        if self._level is not None:
-            self.OnLevelStart(self._level, False)
+        levelNumber = 1 if self._level is None else self._level.GetNumber() + 1
+        self._level = self.GetNextLevel(levelNumber)
 
-        self._console.OnNextLevel()
+        if self._level is not None:
+            if self._level.GetNumber() is None:
+                self._level.SetNumber(levelNumber)
+
+            self.OnLevelStart(self._level, False)
+            self._console.OnNextLevel()
 
     def IsCellAccessible(self, cell, moving):
         return cell.IsAccessible(moving, self._settings)

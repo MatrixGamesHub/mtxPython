@@ -16,6 +16,7 @@
 """
 
 import time
+import encodings.idna
 from threading import Thread, Event, Lock
 
 from thrift import Thrift
