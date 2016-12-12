@@ -26,10 +26,10 @@ class ControllerHandler():
 
     __NEW_RENDERER_ID__ = itertools.count()
 
-    def __init__(self, gameConsole, games):
+    def __init__(self, gameConsole, gameLoader):
         self._gameConsole = gameConsole
         self._renderers = {}
-        self._games = {g.GetName(): g for g in games}
+        self._gameLoader = gameLoader
 
     def Ping(self):
         pass
@@ -55,16 +55,16 @@ class ControllerHandler():
             del self._renderers[rendererId]
 
     def GetGames(self):
-        return self._games.keys()
+        return self._gameLoader.GetGames()
 
     def GetGameInfo(self, name):
-        game = self._GetGame(name)
+        gameClass = self._GetGameClass(name)
 
-        return GameInfo(game.GetName(), game.GetDescription(), game.GetMaxPlayers())
+        return GameInfo(gameClass.GetName(), gameClass.GetDescription(), gameClass.GetMaxPlayers())
 
     def LoadGame(self, name):
-        game = self._GetGame(name)
-        self._gameConsole.LoadGame(game())
+        gameClass = self._GetGameClass(name)
+        self._gameConsole.LoadGame(gameClass())
 
     def MovePlayer(self, number, direction):
         self._gameConsole.MovePlayer(number, direction)
@@ -75,8 +75,8 @@ class ControllerHandler():
     def ResetLevel(self):
         self._gameConsole.ResetLevel()
 
-    def _GetGame(self, name):
-        game = self._games.get(name)
+    def _GetGameClass(self, name):
+        game = self._gameLoader.GetGameClass(name)
         if game is None:
              raise GameError('A game with the name "%s" does not exist.' % name)
         return game

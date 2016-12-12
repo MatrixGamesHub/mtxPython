@@ -49,6 +49,18 @@ class GameConsole():
         self._game.NextLevel()
         self._gameInitialized = True
 
+    def StopGame(self):
+        if self._game is not None:
+            self._gameInitialized = False
+            self._game.OnShutdown()
+            self._game = None
+
+            actGrp = self._actQueue.CreateActGroup()
+            actGrp.AddClearAct()
+            actGrp.Ready()
+
+            self.ProcessActGroup()
+
     def MovePlayer(self, number, direction):
         if self._game is not None:
             self._game.OnPlayerMoveRequest(number, direction)

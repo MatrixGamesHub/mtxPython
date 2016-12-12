@@ -18,15 +18,16 @@
 class Act():
     PAUSE         = 0x00
     RESUME        = 0x01
-    LOAD_LEVEL    = 0x02
-    RESET_LEVEL   = 0x03
-    MOVE          = 0x04
-    JUMP          = 0x05
-    SPAWN         = 0x06
-    REMOVE        = 0x07
-    COLLECT       = 0x08
-    TRIGGER_ENTER = 0x09
-    TRIGGER_LEAVE = 0x0A
+    CLEAR         = 0x02
+    LOAD_LEVEL    = 0x03
+    RESET_LEVEL   = 0x04
+    MOVE          = 0x05
+    JUMP          = 0x06
+    SPAWN         = 0x07
+    REMOVE        = 0x08
+    COLLECT       = 0x09
+    TRIGGER_ENTER = 0x0A
+    TRIGGER_LEAVE = 0x0B
 
     MOTION = (MOVE, JUMP)
     LEVEL = (LOAD_LEVEL, RESET_LEVEL)
@@ -93,6 +94,9 @@ class ActGroup():
 
     def AddResumeAct(self):
         self._acts.append(Act(Act.RESUME))
+
+    def AddClearAct(self):
+        self._acts.append(Act(Act.CLEAR))
 
     def AddLoadLevelAct(self, level):
         self._acts.append(LevelAct(Act.LOAD_LEVEL, level))

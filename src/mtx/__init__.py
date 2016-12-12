@@ -27,6 +27,7 @@ from .Cell import *
 from .Field import *
 from .Level import *
 from .Game import *
+from .GameLoader import *
 
 from . import baseObjects
 from . import objects

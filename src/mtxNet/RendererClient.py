@@ -72,7 +72,9 @@ class RendererClient(mtx.Renderer):
 
         try:
             for act in actGrp:
-                if act.id in mtx.Act.LEVEL:
+                if act.id == mtx.Act.CLEAR:
+                    self._CallClientCommand(self._client.Clear)
+                elif act.id in mtx.Act.LEVEL:
 
                     level = act.level
                     field = level._field

@@ -35,7 +35,7 @@ IF "%1" == "clean" CALL :CLEAN
 :DONE
     IF ERRORLEVEL 1 (
         ECHO build faulty
-    ) else (
+    ) ELSE (
         ECHO build successful
     )
     POPD
@@ -56,12 +56,13 @@ IF "%1" == "clean" CALL :CLEAN
 
 
 :HELP
-    echo.Please use `Make ^<target^>` where ^<target^> is one of
-    echo.  all        clean up environment and build all targets
-    echo.  lib        builds the documentation
-    echo.  service    builds the thrift services
-    echo.  doc        builds the documentation
-    echo.  clean      clean up environment
+    ECHO.Please use `Make ^<target^>` where ^<target^> is one of
+    ECHO.  all        clean up environment and build all targets
+    ECHO.  lib        builds the documentation
+    ECHO.  service    builds the thrift services
+    ECHO.  doc        builds the documentation
+    ECHO.  clean      clean up environment
+    ECHO.
     EXIT /B 0
 
 
@@ -176,6 +177,7 @@ IF "%1" == "clean" CALL :CLEAN
     XCOPY /S /I /Y %SERVICE_DIST_DIR_PYTHON%\RendererService %SERVICE_DEST_DIR%\rendererService
 
     ECHO [ build thrift services done ]
+    ECHO.
     EXIT /B %ERRORLEVEL%
 
 
@@ -188,7 +190,7 @@ IF "%1" == "clean" CALL :CLEAN
 
     MOVE /Y %BUILD_DIR%\html %DIST_DIR%\doc\html
 
-    :BUILD_DOC_DONE
     ECHO [ build doc done ]
     ECHO.
+    :BUILD_DOC_DONE
     EXIT /B %ERRORLEVEL%
