@@ -32,6 +32,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('   GetGames()')
     print('  GameInfo GetGameInfo(string name)')
     print('  void LoadGame(string name)')
+    print('  void ReloadGame()')
     print('  void ResetLevel()')
     print('')
     sys.exit(0)
@@ -159,6 +160,12 @@ elif cmd == 'LoadGame':
         print('LoadGame requires 1 args')
         sys.exit(1)
     pp.pprint(client.LoadGame(args[0],))
+
+elif cmd == 'ReloadGame':
+    if len(args) != 0:
+        print('ReloadGame requires 0 args')
+        sys.exit(1)
+    pp.pprint(client.ReloadGame())
 
 elif cmd == 'ResetLevel':
     if len(args) != 0:

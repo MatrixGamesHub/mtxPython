@@ -37,6 +37,9 @@ class GameConsole():
 
             self.ProcessActGroup(actGrp, renderer)
 
+    def GetGame(self):
+        return self._game
+
     def LoadGame(self, game):
         if self._game is not None:
             self._game.OnShutdown()

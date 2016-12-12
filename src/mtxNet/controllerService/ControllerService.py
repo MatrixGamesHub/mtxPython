@@ -67,6 +67,9 @@ class Iface(object):
         """
         pass
 
+    def ReloadGame(self):
+        pass
+
     def ResetLevel(self):
         pass
 
@@ -320,6 +323,30 @@ class Client(Iface):
             raise result.gameError
         return
 
+    def ReloadGame(self):
+        self.send_ReloadGame()
+        self.recv_ReloadGame()
+
+    def send_ReloadGame(self):
+        self._oprot.writeMessageBegin('ReloadGame', TMessageType.CALL, self._seqid)
+        args = ReloadGame_args()
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_ReloadGame(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = ReloadGame_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        return
+
     def ResetLevel(self):
         self.send_ResetLevel()
         self.recv_ResetLevel()
@@ -357,6 +384,7 @@ class Processor(Iface, TProcessor):
         self._processMap["GetGames"] = Processor.process_GetGames
         self._processMap["GetGameInfo"] = Processor.process_GetGameInfo
         self._processMap["LoadGame"] = Processor.process_LoadGame
+        self._processMap["ReloadGame"] = Processor.process_ReloadGame
         self._processMap["ResetLevel"] = Processor.process_ResetLevel
 
     def process(self, iprot, oprot):
@@ -534,6 +562,25 @@ class Processor(Iface, TProcessor):
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("LoadGame", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_ReloadGame(self, seqid, iprot, oprot):
+        args = ReloadGame_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = ReloadGame_result()
+        try:
+            self._handler.ReloadGame()
+            msg_type = TMessageType.REPLY
+        except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
+            raise
+        except Exception as ex:
+            msg_type = TMessageType.EXCEPTION
+            logging.exception(ex)
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("ReloadGame", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -1488,6 +1535,90 @@ class LoadGame_result(object):
             oprot.writeFieldBegin('gameError', TType.STRUCT, 1)
             self.gameError.write(oprot)
             oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class ReloadGame_args(object):
+
+    thrift_spec = (
+    )
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('ReloadGame_args')
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class ReloadGame_result(object):
+
+    thrift_spec = (
+    )
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('ReloadGame_result')
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 

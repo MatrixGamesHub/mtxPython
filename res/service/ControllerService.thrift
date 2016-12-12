@@ -34,5 +34,6 @@ service ControllerService {
     list<string> GetGames(),
     GameInfo GetGameInfo(1: string name) throws (1:GameError gameError),
     void LoadGame(1: string name) throws (1:GameError gameError),
+    void ReloadGame(),
     void ResetLevel(),
 }

@@ -28,8 +28,9 @@ class ControllerHandler():
 
     def __init__(self, gameConsole, gameLoader):
         self._gameConsole = gameConsole
-        self._renderers = {}
         self._gameLoader = gameLoader
+
+        self._renderers = {}
 
     def Ping(self):
         pass
@@ -65,6 +66,21 @@ class ControllerHandler():
     def LoadGame(self, name):
         gameClass = self._GetGameClass(name)
         self._gameConsole.LoadGame(gameClass())
+
+    def ReloadGame(self):
+        idx = -1
+        game = self._gameConsole.GetGame()
+
+        if game is not None:
+            idx = self._gameLoader.GetGameIndex(game.GetName())
+
+        self._gameConsole.StopGame()
+        self._gameLoader.Load()
+
+        gameClass = self._gameLoader.GetGameClass(idx)
+
+        if gameClass is not None:
+            self._gameConsole.LoadGame(gameClass())
 
     def MovePlayer(self, number, direction):
         self._gameConsole.MovePlayer(number, direction)
