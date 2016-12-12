@@ -33,9 +33,10 @@ class GameLoader():
                                     attr = getattr(gameModule, attrName)
                                     if inspect.isclass(attr) and issubclass(attr, mtx.Game):
                                         gameName = attr.GetName()
-                                        self._gameList.append(gameName)
-                                        self._gameClassDict[gameName] = attr
-                                        self._gameModuleDict[gameName] = gameModule
+                                        if gameName not in self._gameList:
+                                            self._gameList.append(gameName)
+                                            self._gameClassDict[gameName] = attr
+                                            self._gameModuleDict[gameName] = gameModule
                                         break
                             except BaseException as e:
                                 logging.error("Error while loading game module '%s': %s" % (modName, e))
