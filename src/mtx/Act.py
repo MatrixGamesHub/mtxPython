@@ -21,13 +21,14 @@ class Act():
     CLEAR         = 0x02
     LOAD_LEVEL    = 0x03
     RESET_LEVEL   = 0x04
-    MOVE          = 0x05
-    JUMP          = 0x06
-    SPAWN         = 0x07
-    REMOVE        = 0x08
-    COLLECT       = 0x09
-    TRIGGER_ENTER = 0x0A
-    TRIGGER_LEAVE = 0x0B
+    REFRESH       = 0x05
+    MOVE          = 0x06
+    JUMP          = 0x07
+    SPAWN         = 0x08
+    REMOVE        = 0x09
+    COLLECT       = 0x0A
+    TRIGGER_ENTER = 0x0B
+    TRIGGER_LEAVE = 0x0C
 
     MOTION = (MOVE, JUMP)
     LEVEL = (LOAD_LEVEL, RESET_LEVEL)
@@ -103,6 +104,9 @@ class ActGroup():
 
     def AddResetLevelAct(self, level):
         self._acts.append(LevelAct(Act.RESET_LEVEL, level))
+
+    def AddRefreshAct(self, obj):
+        self._acts.append(ObjectAct(Act.REFRESH, obj.GetId()))
 
     def AddMoveAct(self, obj, direction, toX, toY):
         self._acts.append(MotionAct(Act.MOVE, obj.GetId(), direction, obj._cell._x, obj._cell._y, toX, toY))

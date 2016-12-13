@@ -55,6 +55,13 @@ class Iface(object):
         """
         pass
 
+    def Refresh(self, objectId):
+        """
+        Parameters:
+         - objectId
+        """
+        pass
+
     def Spawn(self, objId, symbol, positionX, positionY):
         """
         Parameters:
@@ -383,6 +390,35 @@ class Client(Iface):
         iprot.readMessageEnd()
         return
 
+    def Refresh(self, objectId):
+        """
+        Parameters:
+         - objectId
+        """
+        self.send_Refresh(objectId)
+        self.recv_Refresh()
+
+    def send_Refresh(self, objectId):
+        self._oprot.writeMessageBegin('Refresh', TMessageType.CALL, self._seqid)
+        args = Refresh_args()
+        args.objectId = objectId
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_Refresh(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = Refresh_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        return
+
     def Spawn(self, objId, symbol, positionX, positionY):
         """
         Parameters:
@@ -635,6 +671,7 @@ class Processor(Iface, TProcessor):
         self._processMap["GetPreferedFieldSize"] = Processor.process_GetPreferedFieldSize
         self._processMap["LoadLevel"] = Processor.process_LoadLevel
         self._processMap["ResetLevel"] = Processor.process_ResetLevel
+        self._processMap["Refresh"] = Processor.process_Refresh
         self._processMap["Spawn"] = Processor.process_Spawn
         self._processMap["Remove"] = Processor.process_Remove
         self._processMap["Collect"] = Processor.process_Collect
@@ -844,6 +881,25 @@ class Processor(Iface, TProcessor):
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("ResetLevel", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_Refresh(self, seqid, iprot, oprot):
+        args = Refresh_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = Refresh_result()
+        try:
+            self._handler.Refresh(args.objectId)
+            msg_type = TMessageType.REPLY
+        except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
+            raise
+        except Exception as ex:
+            msg_type = TMessageType.EXCEPTION
+            logging.exception(ex)
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("Refresh", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -1944,6 +2000,108 @@ class ResetLevel_result(object):
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
         oprot.writeStructBegin('ResetLevel_result')
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class Refresh_args(object):
+    """
+    Attributes:
+     - objectId
+    """
+
+    thrift_spec = (
+        None,  # 0
+        (1, TType.I16, 'objectId', None, None, ),  # 1
+    )
+
+    def __init__(self, objectId=None,):
+        self.objectId = objectId
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.I16:
+                    self.objectId = iprot.readI16()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('Refresh_args')
+        if self.objectId is not None:
+            oprot.writeFieldBegin('objectId', TType.I16, 1)
+            oprot.writeI16(self.objectId)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class Refresh_result(object):
+
+    thrift_spec = (
+    )
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('Refresh_result')
         oprot.writeFieldStop()
         oprot.writeStructEnd()
 

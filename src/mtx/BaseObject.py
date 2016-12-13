@@ -41,7 +41,7 @@ class BaseObject():
     def __eq__(self, other):
         if isinstance(other, BaseObject):
             return self._symbol == other.GetSymbol()
-        return self._symbol == other
+        return self._symbol in other
 
     def IsBelow(self, symbol):
         objBelow = self._cell.GetObjectBelow(self)

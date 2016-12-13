@@ -55,6 +55,7 @@ service RendererService {
     list<i8> GetPreferedFieldSize(),
     void LoadLevel(1: list<list<list<list<i16>>>> field, 2: LevelInfo levelInfo),
     void ResetLevel(1: list<list<list<list<i16>>>> field),
+    void Refresh(1: i16 objectId),
     void Spawn(1: i16 objId, 2: i8 symbol, 3: i16 positionX, 4: i16 positionY),
     void Remove(1: i16 objectId, 2: i16 sourceId),
     void Collect(1: i16 objectId, 2: i16 sourceId),

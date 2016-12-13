@@ -15,13 +15,15 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .Box import *
-from .Cursor import *
-from .Dot import *
-from .Empty import *
-from .Exit import *
-from .Key import *
-from .Player import *
-from .Target import *
-from .Tile import *
-from .Wall import *
+from ..baseObjects import CollectableObject
+from .. import RegisterObjectClass
+
+
+class Key(CollectableObject):
+
+    @staticmethod
+    def GetSymbols():
+        return "k"
+
+
+RegisterObjectClass(Key)

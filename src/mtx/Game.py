@@ -103,7 +103,7 @@ class GameInterface():
 
         pass
 
-    def OnTriggerEnter(self, trigger, source):
+    def OnTriggerEnter(self, trigger, source, actGroup):
         """
         Event method, which is called when an object enters a cell with an event object.
 
@@ -115,7 +115,7 @@ class GameInterface():
         """
         pass
 
-    def OnTriggerLeave(self, trigger, source):
+    def OnTriggerLeave(self, trigger, source, actGroup):
         """
         Event method, which is called when an object leaves a cell with an event object.
 
@@ -127,7 +127,7 @@ class GameInterface():
         """
         pass
 
-    def OnCollect(self, collectable, source):
+    def OnCollect(self, collectable, source, actGroup):
         """
         Event method, which is called when a collectable object is to be collected. To veto, the
         method should return False.
@@ -142,7 +142,7 @@ class GameInterface():
         """
         return True
 
-    def OnRemove(self, removable, source):
+    def OnRemove(self, removable, source, actGroup):
         """
         Event method, which is called when a removable object is to be removed. To veto, the
         method should return False.
@@ -257,6 +257,7 @@ class Game(GameInterface):
         self._level = self.GetNextLevel(levelNumber)
 
         if self._level is not None:
+            self._level.SetGame(self)
             if self._level.GetNumber() is None:
                 self._level.SetNumber(levelNumber)
 
@@ -281,6 +282,9 @@ class Game(GameInterface):
         return nCell
 
     def HasPlayer(self, number):
+        if self._level is None:
+            return False
+
         return self._level.GetPlayer(number) is not None
 
     def MoveObject(self, obj, direction, moveDepth=1):
@@ -296,6 +300,8 @@ class Game(GameInterface):
         Returns:
             True, if the object could be moved, False otherwise.
         """
+        if self._level is None:
+            return False
 
         # Create new ActGroup
         actGrp = self._console.CreateActGroup()
@@ -307,6 +313,7 @@ class Game(GameInterface):
             self._console.ProcessActGroup()
         else:
             self._console.DiscardActGroup(actGrp)
+        return result
 
     def MovePlayer(self, number, direction, moveDepth=1):
         """
@@ -321,6 +328,8 @@ class Game(GameInterface):
         Returns:
             True, if the player could be moved, False otherwise.
         """
+        if self._level is None:
+            return False
 
         # Get player by number
         player = self._level.GetPlayer(number)
@@ -343,6 +352,8 @@ class Game(GameInterface):
         Returns:
             True, if the object could jump, False otherwise.
         """
+        if self._level is None:
+            return False
 
         nCell = self.GetAccessibleNeighbourCell(obj, moving=False, direction=direction,
                                                 distance=distance)
@@ -374,6 +385,8 @@ class Game(GameInterface):
         Returns:
             True, if the player could jump, False otherwise.
         """
+        if self._level is None:
+            return False
 
         # Get player by number
         player = self._level.GetPlayer(number)
@@ -424,7 +437,7 @@ class Game(GameInterface):
         nonCollectableFound = False
         for o in cell:
             if o.IsCollectable():
-                if self.OnCollect(o, obj):
+                if self.OnCollect(o, obj, actGrp):
                     actGrp.AddCollectAct(o, obj)
                     cell.Remove(o)
             elif not nonCollectableFound:
@@ -433,11 +446,11 @@ class Game(GameInterface):
                 nonCollectableFound = True
 
                 if o.IsRemovable():
-                    if o.RemoveOnEnter() and self.OnRemove(o, obj):
+                    if o.RemoveOnEnter() and self.OnRemove(o, obj, actGrp):
                         actGrp.AddRemoveAct(o, obj)
                         cell.Remove(o)
                 elif o.IsTrigger():
-                    self.OnTriggerEnter(o, obj)
+                    self.OnTriggerEnter(o, obj, actGrp)
                     actGrp.AddTriggerEnterAct(o, obj)
 
         cell.Add(obj)
@@ -451,8 +464,8 @@ class Game(GameInterface):
             return
 
         if o.IsTrigger():
-            self.OnTriggerLeave(o, obj)
+            self.OnTriggerLeave(o, obj, actGrp)
             actGrp.AddTriggerLeaveAct(o, obj)
-        elif o.IsRemovable() and not o.RemoveOnEnter() and self.OnRemove(o, obj):
+        elif o.IsRemovable() and not o.RemoveOnEnter() and self.OnRemove(o, obj, actGrp):
              actGrp.AddRemoveAct(o, obj)
              cell.Remove(o)

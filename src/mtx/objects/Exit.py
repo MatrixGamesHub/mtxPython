@@ -15,13 +15,33 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .Box import *
-from .Cursor import *
-from .Dot import *
-from .Empty import *
-from .Exit import *
-from .Key import *
-from .Player import *
-from .Target import *
-from .Tile import *
-from .Wall import *
+from ..baseObjects import TriggerObject
+from .. import RegisterObjectClass
+
+
+class Exit(TriggerObject):
+
+    def __init__(self, id, symbol):
+        TriggerObject.__init__(self, id, symbol)
+        self._locked = symbol == 'E'
+
+    @staticmethod
+    def GetSymbols():
+        return "eE"
+
+    def IsLocked(self):
+        return self._locked
+
+    def IsUnlocked(self):
+        return not self._locked
+
+    def Lock(self):
+        self._symbol = 'E'
+        self._locked = True
+
+    def Unlock(self):
+        self._symbol = 'e'
+        self._locked = False
+
+
+RegisterObjectClass(Exit)

@@ -15,7 +15,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from . import Constants, Cell, GameConsole
+from . import Constants, Cell
 
 
 class Field():
@@ -24,12 +24,13 @@ class Field():
     intersection is represented by a :class:`cell<mtx.Cell>`.
     """
 
-    def __init__(self, width, height):
+    def __init__(self, level, width, height):
         """
         Parameters:
             width (:obj:`int`): The width of the field.
             height (:obj:`int`): The height of the field.
         """
+        self._level = level
         self._width = width
         self._height = height
         self._cells = None
@@ -53,6 +54,9 @@ class Field():
                 row.append(Cell(self, x, y))
 
             self._cells.append(row)
+
+    def GetLevel(self):
+        return self._level
 
     def Clear(self):
         """

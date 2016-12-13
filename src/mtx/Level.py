@@ -28,7 +28,7 @@ class Level():
     different :ref:`game objects<mtx.objects>` and gives access to specific objects.
     """
 
-    def __init__(self, width, height, name=None,
+    def __init__(self, width, height, name=None, number=None,
                  groundTexture=Constants.TEXTURE.GROUND.NONE,
                  wallTexture=Constants.TEXTURE.WALL.WHITE_BRICKS):
         """
@@ -41,18 +41,21 @@ class Level():
             wallTecture (:class:`mtx.TEXTURE.GROUND<mtx.Constants.TEXTURE.GROUND>`): The texture
                 for a wall in the level.
         """
-        self._number = None
-        self._field = Field(width, height)
+        self._game = None
+        self._number = number
+        self._field = Field(self, width, height)
         self._name = name
         self._groundTexture = groundTexture
         self._wallTexture = wallTexture
         self._players = {}
+        self._symbols = {}
+        self._objects = {}
         self._objCount = {}
         self._resetDataList = []
         self._newId = count()
 
     @staticmethod
-    def Create(defDict):
+    def Create(defDict, number=None):
         """
         This method creates a new level on the basis of a level definition in the form of a
         directory. It defines all the information for the level such as the name, the textures and
@@ -89,13 +92,19 @@ class Level():
         width  = len(plan[0])
         height = len(plan)
 
-        level = Level(width, height, name, groundTexture, wallTexture)
+        level = Level(width, height, name, number, groundTexture, wallTexture)
 
         for y, row in enumerate(plan):
             for x, symbol in enumerate(row):
                 level.Add(x, y, symbol)
 
         return level
+
+    def GetGame(self):
+        return self._game
+
+    def SetGame(self, game):
+        self._game = game
 
     def GetNumber(self):
         """
@@ -166,6 +175,15 @@ class Level():
         """
         return self._players.get(number)
 
+    def GetObject(self, id):
+        return self._objects[id]
+
+    def GetObjects(self, symbol):
+        objects = []
+        for s in symbol:
+            objects.extend(self._symbols.get(s, []))
+        return objects
+
     def GetObjectCount(self, symbol):
         """
         Parameters:
@@ -212,6 +230,9 @@ class Level():
             obj = objCls(next(self._newId), symbol)
             if isinstance(obj, Player):
                 self._players[obj.GetNumber()] = obj
+
+            self._symbols.setdefault(symbol, []).append(obj)
+            self._objects[obj.GetId()] = obj
 
             self._resetDataList.append(((x, y), obj))
             self._field.GetCell(x, y).Add(obj)
