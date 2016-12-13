@@ -17,7 +17,7 @@
 
 import mtx
 from .rendererService import RendererService
-from .rendererService.ttypes import LevelInfo
+from .rendererService.ttypes import LevelInfo, Value
 
 from thrift.Thrift import TException
 from thrift.transport import TSocket
@@ -93,8 +93,16 @@ class RendererClient(mtx.Renderer):
                         self._CallClientCommand(self._client.LoadLevel, netField, LevelInfo(level._name, level._groundTexture, level._wallTexture))
                     else:
                         self._CallClientCommand(self._client.ResetLevel, netField)
-                elif act.id == mtx.Act.REFRESH:
-                    self._CallClientCommand(self._client.Refresh, act.objId)
+                elif act.id == mtx.Act.UPDATE:
+                    if type(act.value) == str:
+                        value = Value(strValue=act.value)
+                    elif type(act.value) == bool:
+                        value = Value(boolValue=act.value)
+                    elif type(act.value) == int:
+                        value = Value(intValue=act.value)
+                    else:
+                        value = Value(doubleValue=act.value)
+                    self._CallClientCommand(self._client.UpdateObject, act.objId, act.key, value)
                 elif act.id == mtx.Act.SPAWN:
                     self._CallClientCommand(self._client.Spawn, act.objId, ord(act.symbol), act.x, act.y)
                 elif act.id == mtx.Act.REMOVE:

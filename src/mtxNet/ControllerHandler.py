@@ -36,7 +36,8 @@ class ControllerHandler():
         pass
 
     def ConnectRenderer(self, host, port):
-        logging.info('Renderer connected: %s@%s' % (port, host))
+        #logging.info('Renderer connected: %s@%s' % (port, host))
+        print('Renderer connected: %s@%s' % (port, host))
         renderer = RendererClient(host, port)
         if renderer.Connect():
             rendererId = next(self.__NEW_RENDERER_ID__)
@@ -51,9 +52,15 @@ class ControllerHandler():
         renderer = self._renderers.get(rendererId)
 
         if renderer is not None:
-            logging.info('Renderer disconnected: %s@%s' % (renderer.GetPort(), renderer.GetHost()))
+            #logging.info('Renderer disconnected: %s@%s' % (renderer.GetPort(), renderer.GetHost()))
+            print('Renderer disconnected: %s@%s' % (renderer.GetPort(), renderer.GetHost()))
             renderer.Disconnect()
+            self._gameConsole.UnregisterRenderer(renderer)
             del self._renderers[rendererId]
+
+    def DisconnectAllRenderer(self):
+        for rendererId in list(self._renderers):
+            self.DisconnectRenderer(rendererId)
 
     def GetGames(self):
         return self._gameLoader.GetGames()

@@ -9,6 +9,8 @@ mtx.objects
    objectBox.rst
    objectDot.rst
    objectEmpty.rst
+   objectExit.rst
+   objectKey.rst
    objectPlayer.rst
    objectTarget.rst
    objectTile.rst

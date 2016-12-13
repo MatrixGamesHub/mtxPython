@@ -34,7 +34,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('   GetPreferedFieldSize()')
     print('  void LoadLevel( field, LevelInfo levelInfo)')
     print('  void ResetLevel( field)')
-    print('  void Refresh(i16 objectId)')
+    print('  void UpdateObject(i16 objectId, string key, Value value)')
     print('  void Spawn(i16 objId, i8 symbol, i16 positionX, i16 positionY)')
     print('  void Remove(i16 objectId, i16 sourceId)')
     print('  void Collect(i16 objectId, i16 sourceId)')
@@ -181,11 +181,11 @@ elif cmd == 'ResetLevel':
         sys.exit(1)
     pp.pprint(client.ResetLevel(eval(args[0]),))
 
-elif cmd == 'Refresh':
-    if len(args) != 1:
-        print('Refresh requires 1 args')
+elif cmd == 'UpdateObject':
+    if len(args) != 3:
+        print('UpdateObject requires 3 args')
         sys.exit(1)
-    pp.pprint(client.Refresh(eval(args[0]),))
+    pp.pprint(client.UpdateObject(eval(args[0]), args[1], eval(args[2]),))
 
 elif cmd == 'Spawn':
     if len(args) != 4:

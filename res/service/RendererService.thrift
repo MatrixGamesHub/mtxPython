@@ -44,6 +44,14 @@ struct LevelInfo {
 }
 
 
+union Value {
+    1: string strValue,
+    2: i32 intValue,
+    3: bool boolValue,
+    4: double doubleValue,
+}
+
+
 service RendererService {
     void Ping(),
     void Shutdown(),
@@ -55,7 +63,7 @@ service RendererService {
     list<i8> GetPreferedFieldSize(),
     void LoadLevel(1: list<list<list<list<i16>>>> field, 2: LevelInfo levelInfo),
     void ResetLevel(1: list<list<list<list<i16>>>> field),
-    void Refresh(1: i16 objectId),
+    void UpdateObject(1: i16 objectId, 2: string key, 3: Value value),
     void Spawn(1: i16 objId, 2: i8 symbol, 3: i16 positionX, 4: i16 positionY),
     void Remove(1: i16 objectId, 2: i16 sourceId),
     void Collect(1: i16 objectId, 2: i16 sourceId),

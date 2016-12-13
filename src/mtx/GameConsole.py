@@ -37,6 +37,9 @@ class GameConsole():
 
             self.ProcessActGroup(actGrp, renderer)
 
+    def UnregisterRenderer(self, renderer):
+        self._renderers.remove(renderer)
+
     def GetGame(self):
         return self._game
 
