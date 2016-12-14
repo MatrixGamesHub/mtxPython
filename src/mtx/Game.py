@@ -103,7 +103,7 @@ class GameInterface():
 
         pass
 
-    def OnTriggerEnter(self, trigger, source, actGroup):
+    def OnTriggerEnter(self, trigger, source):
         """
         Event method, which is called when an object enters a cell with an event object.
 
@@ -115,7 +115,7 @@ class GameInterface():
         """
         pass
 
-    def OnTriggerLeave(self, trigger, source, actGroup):
+    def OnTriggerLeave(self, trigger, source):
         """
         Event method, which is called when an object leaves a cell with an event object.
 
@@ -127,7 +127,7 @@ class GameInterface():
         """
         pass
 
-    def OnCollect(self, collectable, source, actGroup):
+    def OnCollect(self, collectable, source):
         """
         Event method, which is called when a collectable object is to be collected. To veto, the
         method should return False.
@@ -142,7 +142,7 @@ class GameInterface():
         """
         return True
 
-    def OnRemove(self, removable, source, actGroup):
+    def OnRemove(self, removable, source):
         """
         Event method, which is called when a removable object is to be removed. To veto, the
         method should return False.
@@ -226,6 +226,7 @@ class Game(GameInterface):
         self._console = None
         self._level = None
         self._settings = Settings()
+        self._actGrp = None
 
     def SetConsole(self, console):
         """
@@ -251,6 +252,10 @@ class Game(GameInterface):
             :class:`mtx.Settings`: The settings object of this game.
         """
         return self._settings
+
+    def AddAct(self, act):
+        if self._actGrp is not None:
+            self._actGrp.AddAct(act)
 
     def NextLevel(self):
         levelNumber = 1 if self._level is None else self._level.GetNumber() + 1
@@ -304,15 +309,17 @@ class Game(GameInterface):
             return False
 
         # Create new ActGroup
-        actGrp = self._console.CreateActGroup()
+        self._actGrp = self._console.CreateActGroup()
 
-        result = self._MoveObject(obj, direction, moveDepth, actGrp)
+        result = self._MoveObject(obj, direction, moveDepth)
 
         if result:
-            actGrp.Ready()
+            self._actGrp.Ready()
             self._console.ProcessActGroup()
         else:
-            self._console.DiscardActGroup(actGrp)
+            self._console.DiscardActGroup(self._actGrp)
+        self._actGrp = None
+
         return result
 
     def MovePlayer(self, number, direction, moveDepth=1):
@@ -361,15 +368,16 @@ class Game(GameInterface):
             return False
 
         # Create new ActGroup
-        actGrp = self._console.CreateActGroup()
+        self._actGrp = self._console.CreateActGroup()
 
-        actGrp.AddJumpAct(obj, direction, nCell._x, nCell._y)
+        self._actGrp.AddJumpAct(obj, direction, nCell._x, nCell._y)
 
-        self._LeaveCell(obj, obj.GetCell(), actGrp)
-        self._EnterCell(obj, nCell, actGrp)
+        self._LeaveCell(obj, obj.GetCell())
+        self._EnterCell(obj, nCell)
 
-        actGrp.Ready()
+        self._actGrp.Ready()
         self._console.ProcessActGroup()
+        self._actGrp = None
 
         return True
 
@@ -397,7 +405,7 @@ class Game(GameInterface):
         # Jump the player
         return self.JumpObject(player, direction, distance)
 
-    def _MoveObject(self, obj, direction, moveDepth, actGrp):
+    def _MoveObject(self, obj, direction, moveDepth):
         """
         Moves an object in the given direction.
 
@@ -406,7 +414,6 @@ class Game(GameInterface):
             direction (:obj:`int`): Direction in which the object is to be moved.
             moveDepth (:obj:`int`): The maximum number of adjacent moving objects that can be moved
                 at a time.
-            actGrp (mtx.ActGroup): All acts that occur during the move are added to this group.
 
         Returns:
             True, if the object could be moved, False otherwise.
@@ -420,25 +427,25 @@ class Game(GameInterface):
         if nObj is not None and nObj.IsMovable():
             # If moveDepth is zero or the object on the neighbour cell could not be moved, then
             # return False.
-            if moveDepth == 0 or not self._MoveObject(nObj, direction, moveDepth-1, actGrp):
+            if moveDepth == 0 or not self._MoveObject(nObj, direction, moveDepth-1):
                 return False
 
-        actGrp.AddMoveAct(obj, direction, nCell._x, nCell._y)
+        self._actGrp.AddMoveAct(obj, direction, nCell._x, nCell._y)
 
-        self._LeaveCell(obj, obj.GetCell(), actGrp)
-        self._EnterCell(obj, nCell, actGrp)
+        self._LeaveCell(obj, obj.GetCell())
+        self._EnterCell(obj, nCell)
 
         return True
 
-    def _EnterCell(self, obj, cell, actGrp):
+    def _EnterCell(self, obj, cell):
         # If any collectable objects are present, then ALL of them will be collected, if
         # they are accepted by the entering object. The top most object, that is not a
         # collectable will be treated separately.
         nonCollectableFound = False
         for o in cell:
             if o.IsCollectable():
-                if self.OnCollect(o, obj, actGrp):
-                    actGrp.AddCollectAct(o, obj)
+                if self.OnCollect(o, obj):
+                    self._actGrp.AddCollectAct(o, obj)
                     cell.Remove(o)
             elif not nonCollectableFound:
                 # The top most non-collectable object has been found, so make sure that no
@@ -446,16 +453,16 @@ class Game(GameInterface):
                 nonCollectableFound = True
 
                 if o.IsRemovable():
-                    if o.RemoveOnEnter() and self.OnRemove(o, obj, actGrp):
-                        actGrp.AddRemoveAct(o, obj)
+                    if o.RemoveOnEnter() and self.OnRemove(o, obj):
+                        self._actGrp.AddRemoveAct(o, obj)
                         cell.Remove(o)
                 elif o.IsTrigger():
-                    self.OnTriggerEnter(o, obj, actGrp)
-                    actGrp.AddTriggerEnterAct(o, obj)
+                    self.OnTriggerEnter(o, obj)
+                    self._actGrp.AddTriggerEnterAct(o, obj)
 
         cell.Add(obj)
 
-    def _LeaveCell(self, obj, cell, actGrp):
+    def _LeaveCell(self, obj, cell):
         cell.Remove(obj)
 
         # Only treat the top most object.
@@ -464,8 +471,8 @@ class Game(GameInterface):
             return
 
         if o.IsTrigger():
-            self.OnTriggerLeave(o, obj, actGrp)
-            actGrp.AddTriggerLeaveAct(o, obj)
-        elif o.IsRemovable() and not o.RemoveOnEnter() and self.OnRemove(o, obj, actGrp):
-             actGrp.AddRemoveAct(o, obj)
+            self.OnTriggerLeave(o, obj)
+            self._actGrp.AddTriggerLeaveAct(o, obj)
+        elif o.IsRemovable() and not o.RemoveOnEnter() and self.OnRemove(o, obj):
+             self._actGrp.AddRemoveAct(o, obj)
              cell.Remove(o)

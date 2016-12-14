@@ -16,6 +16,7 @@
 """
 
 from ..baseObjects import TriggerObject
+from .. import UpdateAct
 from .. import RegisterObjectClass
 
 
@@ -38,10 +39,12 @@ class Exit(TriggerObject):
     def Lock(self):
         self._symbol = 'E'
         self._locked = True
+        self._cell._field._level._game.AddAct(UpdateAct(self.GetId(), 'locked', True))
 
     def Unlock(self):
         self._symbol = 'e'
         self._locked = False
+        self._cell._field._level._game.AddAct(UpdateAct(self.GetId(), 'locked', False))
 
 
 RegisterObjectClass(Exit)

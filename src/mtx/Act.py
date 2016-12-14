@@ -97,6 +97,9 @@ class ActGroup():
     def Ready(self):
         self._busy = False
 
+    def AddAct(self, act):
+        self._acts.append(act)
+
     def AddPauseAct(self):
         self._acts.append(Act(Act.PAUSE))
 

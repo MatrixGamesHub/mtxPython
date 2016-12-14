@@ -63,7 +63,7 @@ class ControllerHandler():
             self.DisconnectRenderer(rendererId)
 
     def GetGames(self):
-        return self._gameLoader.GetGames()
+        return self._gameLoader.GetGameNames()
 
     def GetGameInfo(self, name):
         gameClass = self._GetGameClass(name)
