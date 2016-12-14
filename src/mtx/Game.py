@@ -335,7 +335,7 @@ class Game(GameInterface):
         Returns:
             True, if the player could be moved, False otherwise.
         """
-        if self._level is None:
+        if self._level is None or not self._settings.movingAllowed:
             return False
 
         # Get player by number
@@ -393,7 +393,7 @@ class Game(GameInterface):
         Returns:
             True, if the player could jump, False otherwise.
         """
-        if self._level is None:
+        if self._level is None or not self._settings.jumpingAllowed:
             return False
 
         # Get player by number

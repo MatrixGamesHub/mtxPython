@@ -26,7 +26,7 @@ class Settings():
 
         self.centerSmalerLevels = True
         """
-        If the renderer has a fixed size, but a level is smaller, then this setting determines
+        If the renderer has a fixed size and a level is smaller, then this setting indicates
         whether the level should be centered or drawn in the upper left corner.
         """
 
@@ -40,4 +40,14 @@ class Settings():
         """
         List of object symbols, none of which may be present in the cell to grant access.
         If the value is None (default), there is no blacklist check.
+        """
+
+        self.movingAllowed = True
+        """
+        Indicates whether a player is allowed to move.
+        """
+
+        self.jumpingAllowed = False
+        """
+        Indicates whether a player is allowed to jump.
         """
