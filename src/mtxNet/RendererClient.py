@@ -15,6 +15,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
+import logging
+
 import mtx
 from .rendererService import RendererService
 from .rendererService.ttypes import LevelInfo, Value
@@ -64,7 +66,7 @@ class RendererClient(mtx.Renderer):
         try:
             cmd(*args, **kwargs)
         except TException:
-            print("Connection to renderer client lost...")
+            logging.error("Connection to renderer client lost...", exc_info=1)
             self.Disconnect()
 
     def ProcessActGroup(self, actGrp):
