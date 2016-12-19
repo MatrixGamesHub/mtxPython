@@ -17,6 +17,38 @@
 
 import time
 from . import ActGroup, ActQueue
+from threading import Thread
+import queue
+
+
+class ActionProcessor(Thread):
+
+    def __init__(self, renderer):
+        Thread.__init__(self, name="ActionProcessor %s" % renderer)
+        self._active = True
+        self._actQueue = queue.Queue()
+        self._renderer = renderer
+        self.setDaemon(True)
+
+    def AddActGroup(self, actGroup):
+        self._actQueue.put(actGroup)
+        
+    def Stop(self):
+        print("stopping", self.getName())
+        self._active = False
+
+    def run(self):
+        print("start", self.getName())
+        while self._active:
+            actGrp = None
+            try:
+                actGrp = self._actQueue.get(timeout=1)
+            except queue.Empty:
+                continue
+
+            if len(actGrp) > 0:
+                self._renderer.ProcessActGroup(actGrp)
+        print("finishing", self.getName())
 
 
 class GameConsole():
@@ -27,15 +59,22 @@ class GameConsole():
         self._gameInitialized = False
         self._clock = time.clock()
         self._actQueue = ActQueue()
+        
+    def Destroy(self):
+        for actProc in self._renderers:
+            actProc.Stop()
 
     def RegisterRenderer(self, renderer):
-        self._renderers.append(renderer)
+        actProc = ActionProcessor(renderer)
+        self._renderers.append(actProc)
         if self._game is not None and self._game._level is not None:
             actGrp = ActGroup()
             actGrp.AddLoadLevelAct(self._game._level)
             actGrp.Ready()
 
-            self.ProcessActGroup(actGrp, renderer)
+            actProc.AddActGroup(actGrp)
+
+        actProc.start()
 
     def UnregisterRenderer(self, renderer):
         self._renderers.remove(renderer)
@@ -110,12 +149,8 @@ class GameConsole():
         renderers = self._renderers if renderer is None else [renderer]
 
         for actGrp in queue[:]:
-            if actGrp.IsBusy():
-                break
-
-            if len(actGrp) > 0:
-                for renderer in renderers:
-                    renderer.ProcessActGroup(actGrp)
+            for renderer in renderers:
+                renderer.AddActGroup(actGrp)
 
             queue.remove(actGrp)
 
